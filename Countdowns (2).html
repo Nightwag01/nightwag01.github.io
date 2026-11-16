@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Countdowns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fa;--ink:#14213d;--muted:#5b6b86;--track:#d7dfeb;--accent:#2f5bff;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f182b;--ink:#e9eef7;--muted:#9aa9c4;--track:#25324d;--accent:#7f9cff;--on:#0b1530;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f182b;--ink:#e9eef7;--muted:#9aa9c4;--track:#25324d;--accent:#7f9cff;--on:#0b1530;color-scheme:dark}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3,.n,.brand{font-family:"Bricolage Grotesque","Arial Black",system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;background:var(--bg);border-bottom:1px solid var(--track)}
+.nav .wrap{display:flex;justify-content:space-between;align-items:center;height:68px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.35rem;letter-spacing:-.02em}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--on);display:grid;place-items:center}
+.logo svg{display:block}
+#lg{transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1) .15s}
+#kb{transform-origin:20px 20px;transition:transform 1.4s cubic-bezier(.2,.8,.2,1) .15s}
+@media (prefers-reduced-motion:reduce){#lg,#kb{transition:none}}
+[data-cat="h"]{--cc:#e8467c}[data-cat="n"]{--cc:#1f9d6b}[data-cat="o"]{--cc:#e0a100}[data-cat="y"]{--cc:#8a5cf6}[data-cat="f"]{--cc:#0aa0c2}[data-cat="u"]{--cc:#ff6b2c}[data-cat="s"]{--cc:#b7791f}[data-cat="m"]{--cc:#dc2626}[data-cat="g"]{--cc:#6366f1}[data-cat="e"]{--cc:#334155}
+.bd{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;line-height:1;background:color-mix(in srgb,var(--cc,var(--accent)) 18%,transparent)}
+.soon{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+.pill{flex:none;max-width:270px;display:flex;align-items:center;gap:10px;font:inherit;color:inherit;text-align:left;background:transparent;border:1.5px solid var(--track);border-radius:14px;padding:9px 14px 9px 9px;cursor:pointer}
+.pill:hover{border-color:var(--cc)}
+.pt b{display:block;font-weight:600;font-size:.95rem;line-height:1.2}
+.pt small{color:var(--muted);font-size:.85rem}
+.hero{display:grid;gap:24px}
+.hc{min-width:0}
+.hero .hd{color:inherit;opacity:.85;margin-top:8px}
+.ring{display:none;width:clamp(170px,22vw,220px);height:auto}
+@media (min-width:720px){.hero{grid-template-columns:1fr auto;align-items:center}.ring{display:block}.hero .bar{display:none}}
+.hr{display:flex;gap:10px;align-items:center}
+.ic{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--track);background:transparent;color:var(--ink);font-size:1.2rem;cursor:pointer}
+.plus{width:44px;height:44px;border-radius:50%;border:0;background:var(--accent);color:var(--on);display:grid;place-items:center;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hero{background:var(--accent);color:var(--on);border-radius:24px;padding:clamp(24px,5vw,48px);margin-top:28px}
+.hero .hl{margin:0;opacity:.85;font-weight:600}
+.hero .hn{display:flex;align-items:center;gap:12px;margin:6px 0 0;font-size:clamp(1.7rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.hero .big .n{font-size:clamp(6rem,24vw,11rem);margin-top:6px}
+.hero .u,.hero .t{color:inherit;opacity:.85}
+.hero .btn{background:var(--on);color:var(--accent);border-color:var(--on)}
+h2{margin:44px 0 14px;font-size:1.4rem;font-weight:800;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{font:inherit;color:inherit;text-align:left;background:color-mix(in srgb,var(--bg) 70%,#fff 30%);border:1.5px solid var(--track);border-radius:16px;padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card.mine .d{color:var(--accent)}
+.card.empty{border-style:dashed;align-items:center;justify-content:center;min-height:150px;color:var(--muted);font-weight:600;background:transparent}
+.ct{display:flex;align-items:center;gap:8px;font-weight:600;line-height:1.2}
+.em{font-size:1.4rem;line-height:1}
+.n{display:flex;align-items:baseline;gap:.3em;margin-top:10px;font-weight:800;font-size:3.2rem;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.u{font-size:1rem;font-weight:500;letter-spacing:0;color:var(--accent)}
+.t{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
+.dt{margin:0;color:var(--muted);font-size:.9rem}
+.tools{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.search{width:100%;max-width:420px;margin:0;border-radius:999px;padding:12px 18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:.92rem;font-weight:600;color:var(--ink);background:transparent;border:1.5px solid var(--track);border-radius:999px;padding:7px 14px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cnt{color:var(--muted);margin:0 0 14px;font-size:.95rem}
+.more{display:block;margin:24px auto 0}
+.foot{margin:48px 0 0;padding:24px 0 40px;border-top:1px solid var(--track);color:var(--muted);font-size:.9rem;max-width:70ch;line-height:1.5}
+dialog{border:0;border-radius:20px;padding:0;background:var(--bg);color:var(--ink);width:min(580px,94vw);max-height:90vh;overflow:auto}
+dialog::backdrop{background:rgba(10,18,36,.55)}
+.dbody{padding:28px clamp(20px,5vw,32px);display:block}
+.x{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:1.6rem;cursor:pointer}
+.dh{display:flex;gap:14px;align-items:center;padding-right:30px}
+.dh .em{font-size:2.6rem}
+.dh h2{margin:0;font-size:1.6rem;line-height:1.1}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-size:.82rem;font-weight:600;border-radius:999px;padding:4px 10px;background:var(--track)}
+.big .n{font-size:clamp(4.5rem,18vw,7.5rem);margin-top:18px}
+.big .u{font-size:1.5rem}
+.big .t{font-size:1.4rem;margin-top:6px}
+.bar{height:8px;border-radius:4px;background:var(--track);margin-top:18px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.hero .bar{background:rgba(255,255,255,.3)}.hero .bar i{background:var(--on)}
+h3{margin:26px 0 6px;font-size:1.1rem}
+.txt{line-height:1.6;max-width:62ch;margin:10px 0 0}
+.acts{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:.95rem;text-decoration:none;display:inline-block;border:1.5px solid var(--accent);background:var(--accent);color:var(--on);padding:10px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--track)}
+label{display:block;margin-top:16px;font-weight:600;font-size:.95rem}
+input{display:block;width:100%;margin-top:6px;font:inherit;font-weight:400;color:inherit;background:transparent;border:1.5px solid var(--track);border-radius:10px;padding:10px 12px}
+label.chk{display:flex;align-items:center;gap:10px;font-weight:400}
+label.chk input{width:20px;height:20px;margin:0}
+.row{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.err{min-height:1.3em;margin:12px 0 0;color:#d6336c;font-size:.95rem}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.nav{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px)}
+.hero{position:relative;overflow:hidden;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.18) 1.5px,transparent 0);background-size:22px 22px}
+dialog[open]{animation:pop .24s cubic-bezier(.2,.8,.2,1)}
+dialog::backdrop{backdrop-filter:blur(4px)}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}}
+@media (prefers-reduced-motion:reduce){dialog[open]{animation:none}}
+.card:hover{box-shadow:0 12px 30px -14px color-mix(in srgb,var(--cc,var(--accent)) 70%,transparent)}
+.card.mine .d{color:var(--cc,var(--accent))}
+.mh{grid-column:1/-1;margin:22px 0 0;font-size:1.05rem;font-weight:800;color:var(--muted)}
+.mh:first-child{margin-top:0}
+.chip small{opacity:.7;font-weight:400;margin-left:6px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.stat{border:1.5px solid var(--track);border-radius:12px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:.8rem}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pk{width:40px;height:40px;border-radius:12px;border:2px solid var(--track);background:transparent;font-size:1.2rem;cursor:pointer;display:grid;place-items:center;padding:0}
+.pk.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid transparent;box-shadow:inset 0 0 0 2px var(--bg);cursor:pointer;padding:0}
+.sw.on{border-color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+#cf{position:fixed;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;pointer-events:none;overflow:visible}
+textarea{display:block;width:100%;margin-top:12px;font:.85rem ui-monospace,Menlo,Consolas,monospace;color:inherit;background:transparent;border:1.5px solid var(--track);border-radius:10px;padding:10px 12px;resize:vertical}
+.seg{display:inline-flex;border:1.5px solid var(--track);border-radius:999px;padding:3px;margin:0 0 14px}
+.seg button{font:inherit;font-weight:600;font-size:.92rem;color:var(--muted);background:transparent;border:0;border-radius:999px;padding:7px 18px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+#cal{display:none}
+main.cal-on #cal{display:block}
+main.cal-on #events,main.cal-on #more,main.cal-on #count,main.cal-on #when{display:none!important}
+.calh{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.calt{margin:0 auto 0 4px;font-size:1.25rem}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cwd{text-align:center;color:var(--muted);font-size:.85rem;font-weight:600;padding:4px 0}
+.cday{font:inherit;color:inherit;text-align:left;min-height:78px;border:1.5px solid var(--track);border-radius:12px;background:transparent;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.cday:hover{border-color:var(--accent)}
+.cday.td{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.cday.sel{box-shadow:inset 0 0 0 2px var(--accent)}
+.dn{font-weight:600;font-size:.9rem}
+.dots{display:flex;flex-wrap:wrap;gap:2px;font-size:.95rem;line-height:1}
+.dots i{font-style:normal}
+.dots small{color:var(--muted);font-size:.75rem;align-self:center}
+.agenda{margin-top:22px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.agenda h3{margin:0 0 4px}
+@media (max-width:520px){.cday{min-height:58px;padding:4px}.dots{font-size:.8rem}}
+select{display:block;width:100%;margin-top:6px;font:inherit;color:inherit;background:transparent;border:1.5px solid var(--track);border-radius:10px;padding:10px 12px}
+#fres{margin-top:18px;align-items:stretch}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1.5px solid var(--track);border-radius:12px;padding:10px 12px}
+.frow div{min-width:0}.frow b{display:block}.frow small{display:block;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="12.5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="4"/><circle id="lg" cx="20" cy="20" r="12.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 20 20)"/><g id="kb"><circle cx="20" cy="7.5" r="3.6" fill="currentColor"/><circle cx="20" cy="7.5" r="1.3" fill="var(--accent)"/></g><circle cx="20" cy="20" r="2" fill="currentColor"/></svg></span><span>Countdowns</span></div>
+  <div class="hr">
+    <button class="ic" id="tg" aria-label="Switch light or dark theme" title="Switch theme">◐</button>
+    <button class="plus" id="add" aria-label="New countdown" title="New countdown"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <section class="hero" id="hero" hidden></section>
+  <h2>Coming up</h2><div class="soon" id="soon"></div>
+  <h2>Yours and pinned</h2><div class="grid" id="mine"></div>
+  <h2>Explore events</h2>
+  <div class="seg" id="seg"><button type="button" class="on" data-v="list">List</button><button type="button" data-v="cal">Calendar</button></div>
+  <div class="tools">
+    <input class="search" id="q" type="search" placeholder="Search events, countries or holidays (press /)" aria-label="Search events">
+    <button class="btn" id="fnd" type="button" style="align-self:flex-start" hidden>✨ Find new events with Claude</button>
+    <div class="chips" id="chips"></div>
+    <div class="chips" id="when"></div>
+  </div>
+  <p class="cnt" id="count"></p>
+  <div class="grid" id="events"></div>
+  <div id="cal"></div>
+  <button class="btn ghost more" id="more" type="button">Show more</button>
+  <div class="acts" style="margin-top:36px"><button class="btn ghost" id="bk" type="button">Back up or restore my countdowns</button></div>
+  <p class="foot" style="margin-top:20px">Yearly events start over by themselves as soon as they have happened. Your countdowns and pins are saved in this browser only. Movable religious dates and sky events can differ by a day depending on where you are. The built-in event list was last updated on November 16, 2026. Use “Find new events” to ask Claude for more.</p>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<canvas id="cf" popover="manual" aria-hidden="true"></canvas>
+<dialog id="dlg"><button class="x" aria-label="Close" data-close>×</button><div class="dbody" id="dbody"></div></dialog>
+
+<dialog id="fdlg"><button class="x" aria-label="Close" data-close>×</button><div class="dbody">
+  <h2 style="margin:0">Find new events</h2>
+  <p class="txt">Ask Claude for events you’d like to count down to. Suggestions come from Claude’s own knowledge, which has a cutoff, so very new events can be missing and dates can be wrong. Check a date before you rely on it.</p>
+  <label>What are you looking for?<input id="fq" maxlength="120" placeholder="Music festivals in Africa, space launches, tech conferences"></label>
+  <label>Time window<select id="fw"><option value="90">Next 3 months</option><option value="365" selected>Next 12 months</option><option value="730">Next 2 years</option></select></label>
+  <p class="err" id="fer" role="alert"></p>
+  <div class="acts" style="margin-top:8px"><button class="btn" type="button" id="fgo">Ask Claude</button></div>
+  <div class="agenda" id="fres"></div>
+</div></dialog>
+
+<dialog id="bkdlg"><button class="x" aria-label="Close" data-close>×</button><div class="dbody"><h2 style="margin:0">Back up or restore</h2>
+  <p class="txt">Copy this text to keep a backup of your countdowns and pins. To restore, paste a backup here and press Restore.</p>
+  <textarea id="bkt" rows="8" spellcheck="false"></textarea><p class="err" id="bke" role="alert"></p>
+  <div class="acts" style="margin-top:8px"><button class="btn ghost" type="button" id="bks">Select all</button><button class="btn" type="button" id="bkr">Restore from text</button></div></div></dialog>
+
+<dialog id="newdlg"><button class="x" aria-label="Close" data-close>×</button>
+  <form class="dbody" id="f">
+    <h2 style="margin:0" id="fh">New countdown</h2>
+    <div class="chips" id="tpl" style="margin-top:14px" hidden></div>
+    <label>Name<input id="fn" required maxlength="40" placeholder="Birthday trip"></label>
+    <div class="row"><label>Date<input id="fd" type="date" required></label><label>Time<input id="ft" type="time" value="00:00" required></label></div>
+    <label>Note (optional)<input id="fo" maxlength="140"></label>
+    <div class="pick" id="pe"></div><div class="pick" id="pc"></div>
+    <label class="chk"><input id="fr" type="checkbox"> Repeat every year</label>
+    <p class="err" id="fe" role="alert"></p>
+    <div class="acts" style="margin-top:8px"><button type="button" class="btn ghost" data-close>Cancel</button><button class="btn">Save countdown</button></div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+var DAY=864e5,$=function(s){return document.querySelector(s)};
+var pad=function(n){return String(n).padStart(2,"0")},clamp=function(v){return Math.max(0,Math.min(1,v))};
+var L=function(y,m,d,h,mi){return new Date(y,m-1,d,h||0,mi||0).getTime()};
+function ld(k,d){try{var r=localStorage.getItem(k);return r===null?d:JSON.parse(r)}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* Movable dates, one entry per year starting 2026 (approximate for moon-based dates) */
+var TB={lny:["02-17","02-06","01-26","02-13","02-03","01-23","02-11"],diw:["11-08","10-29","10-17","11-05","10-26"],
+fit:["03-20","03-10","02-27","02-15","02-05"],adh:["05-27","05-17","05-05","04-24","04-14"],ram:["02-18","02-08","01-28","01-16","01-06"],holi:["03-04","03-22","03-11","03-01","03-20"],rh:["09-12","10-02","09-21","09-10","09-28"],yk:["09-21","10-11","09-30","09-19","10-07"],pas:["04-02","04-22","04-11","03-31","04-17"],han:["12-05","12-25","12-13"],isn:["06-16","06-06","05-26","05-15","05-05"],mid:["09-25","09-15","10-03","09-22","09-12"],dbt:["06-19","06-09","05-28","06-16","06-05"]};
+function easter(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),n=h+l-7*m+114;return new Date(y,Math.floor(n/31)-1,n%31+1)}
+function occ(r,y){var m;
+  if((m=r.match(/^(\d\d)-(\d\d)$/))){var d=new Date(y,+m[1]-1,+m[2]);return d.getMonth()===+m[1]-1?+d:null}
+  if((m=r.match(/^(\d+)\/([\dL])\/(\d)(?:\+(\d+))?$/))){var mo=+m[1]-1,wd=+m[3],x;
+    if(m[2]==="L"){x=new Date(y,mo+1,0);x.setDate(x.getDate()-(x.getDay()-wd+7)%7)}
+    else{x=new Date(y,mo,1);x.setDate(1+(wd-x.getDay()+7)%7+7*(m[2]-1))}
+    x.setDate(x.getDate()+(+m[4]||0));return+x}
+  if((m=r.match(/^E([+-]\d+)$/))){var e=easter(y);e.setDate(e.getDate()+ +m[1]);return+e}
+  if((m=r.match(/^T(\w+)$/))){var s=(TB[m[1]]||[])[y-2026];return s?L(y,+s.slice(0,2),+s.slice(3)):null}
+  return null}
+
+var CHIPS=[["all","All"],["pin","Pinned"],["h","Holidays"],["n","National days"],["o","Awareness days"],["y","History"],["f","Science & fun"],["s","Sports & culture"],["m","Movies"],["g","Games"],["e","In the news"],["u","One-time"]];
+var IC={h:"🎉",n:"🏳️",o:"💡",y:"📜",f:"🔭",s:"🏆",m:"🎬",g:"🎮",e:"📰",u:"⭐"};
+var CN={h:"Holiday",n:"National day",o:"Awareness day",y:"History",f:"Science & fun",s:"Sports & culture",m:"Movie release",g:"Game release",e:"In the news",u:"Future event"};
+var DS={n:"A national day marks independence, the founding of a republic or another defining moment, depending on the country.",o:"An international awareness day, used by governments and organizations to draw attention to a cause.",h:"An annual holiday or festival.",y:"The anniversary of a historic moment.",f:"A date from the worlds of science, space or internet culture.",s:"A sporting or cultural event.",m:"A film release date in US theaters. Studios often move these dates.",g:"A video game release date. Publishers often move these dates.",e:"A scheduled summit, conference or awards event that is in the news.",u:"A one-time event coming up in the future."};
+
+var EV=[];
+function add(cat,txt){txt.trim().split("\n").forEach(function(l){var p=l.split("|"),r=p[0],yr=0,m,once=0;
+  if((m=r.match(/^(.+)@(\d{4})$/))){r=m[1];yr=+m[2]}
+  if((m=r.match(/^(\d{4})-(\d\d)-(\d\d)$/)))once=L(+m[1],+m[2],+m[3]);
+  EV.push({cat:cat,r:r,yr:yr,once:once,name:p[1],about:p[2]||""})})}
+
+add("h",`01-01|New Year’s Day|Marking the new year on January 1 goes back to 45 BCE, when Julius Caesar’s calendar reform set the Roman year to begin that day. Countries later used other start dates, then gradually returned to January 1, helped by the Gregorian calendar of 1582.
+01-06|Epiphany
+01-25|Burns Night
+01-26|Republic Day (India)
+02-02|Groundhog Day
+02-14|Valentine’s Day|The day honors early Christian martyrs named Valentine. Its link to romance is usually traced to Chaucer, who wrote in the 1300s about birds choosing mates on that day. Mass-produced cards arrived in the 1800s.
+03-17|St Patrick’s Day
+04-01|April Fools’ Day
+05-01|International Workers’ Day
+05-05|Cinco de Mayo
+06-19|Juneteenth
+10-31|Halloween
+11-01|All Saints’ Day
+11-02|Day of the Dead
+11-05|Guy Fawkes Night
+11-11|Armistice Day and Veterans Day
+12-24|Christmas Eve
+12-25|Christmas|Christians celebrate the birth of Jesus on December 25, though the Bible gives no date for it. The earliest record of a December 25 celebration in Rome comes from the fourth century. Customs like the tree, carols and gift-giving were added over the centuries, and many modern traditions took shape in the 1800s.
+12-26|Boxing Day
+12-31|New Year’s Eve
+1/3/1|Martin Luther King Jr. Day (US)
+2/3/1|Presidents’ Day (US)
+5/2/0|Mother’s Day (US)
+5/L/1|Memorial Day (US)
+6/3/0|Father’s Day (US)
+9/1/1|Labor Day (US)
+10/2/1|Columbus Day and Thanksgiving (Canada)
+11/4/4|Thanksgiving (US)|Americans trace the holiday to a 1621 harvest feast at Plymouth, shared by English colonists and the Wampanoag people. Abraham Lincoln proclaimed a national day of thanks in 1863, and in 1941 Congress fixed it on the fourth Thursday of November. Many Native Americans also mark the day as a National Day of Mourning, a tradition that began in 1970.
+11/4/4+1|Black Friday
+11/4/4+4|Cyber Monday
+E-47|Shrove Tuesday
+E-46|Ash Wednesday
+E-21|Mothering Sunday (UK)
+E-7|Palm Sunday
+E-2|Good Friday
+E+0|Easter|Easter celebrates the resurrection of Jesus. Church leaders met at the Council of Nicaea in 325 CE to unify its timing, and Western churches settled on the first Sunday after the first full moon on or after the March equinox. That is why the date moves each year, between March 22 and April 25. Orthodox churches use a different calendar.
+E+1|Easter Monday
+E+39|Ascension Day
+E+49|Pentecost
+Tlny|Lunar New Year|Lunar New Year follows the lunar calendar and falls between January 21 and February 20. Its roots lie in ancient Chinese agricultural and ancestral festivals, and today it is celebrated in China, Vietnam (Tết), Korea (Seollal) and many other places with family reunions, red envelopes and lion dances. Each year belongs to one of 12 zodiac animals.
+Tdiw|Diwali|The festival of lights celebrated by Hindus, Sikhs and Jains, usually in October or November. Lamps and fireworks mark the triumph of light over darkness. Date shown is approximate.
+Tram|Ramadan begins|The Islamic month of fasting from dawn to sunset. Its start depends on moon sighting, so the date shown is approximate.
+Tfit|Eid al-Fitr|The festival that ends Ramadan. Its date depends on moon sighting, so the date shown is approximate.
+Tadh|Eid al-Adha|The festival of sacrifice, which follows the annual Hajj pilgrimage to Mecca. Its date depends on moon sighting, so the date shown is approximate.`);
+
+add("o",`01-24|International Day of Education
+01-27|International Holocaust Remembrance Day
+02-04|World Cancer Day
+02-11|International Day of Women and Girls in Science
+02-13|World Radio Day
+02-20|World Day of Social Justice
+02-21|International Mother Language Day
+03-03|World Wildlife Day
+03-08|International Women’s Day
+03-20|International Day of Happiness
+03-21|World Poetry Day
+03-22|World Water Day
+03-24|World Tuberculosis Day
+03-27|World Theatre Day
+04-02|World Autism Awareness Day
+04-07|World Health Day
+04-22|Earth Day
+04-23|World Book Day
+04-30|International Jazz Day
+05-03|World Press Freedom Day
+05-15|International Day of Families
+05-17|World Telecommunication Day
+05-22|International Day for Biological Diversity
+05-31|World No Tobacco Day
+06-05|World Environment Day
+06-08|World Oceans Day
+06-14|World Blood Donor Day
+06-20|World Refugee Day
+06-21|International Day of Yoga
+07-11|World Population Day
+07-18|Nelson Mandela International Day
+07-30|International Day of Friendship
+08-09|International Day of the World’s Indigenous Peoples
+08-12|International Youth Day
+08-19|World Humanitarian Day
+09-08|International Literacy Day
+09-15|International Day of Democracy
+09-21|International Day of Peace
+09-27|World Tourism Day
+10-01|International Day of Older Persons
+10-05|World Teachers’ Day
+10-10|World Mental Health Day
+10-16|World Food Day
+10-24|United Nations Day
+11-14|World Diabetes Day
+11-16|International Day for Tolerance
+11-19|World Toilet Day
+11-20|World Children’s Day
+11-25|Day for the Elimination of Violence against Women
+12-01|World AIDS Day
+12-03|International Day of Persons with Disabilities
+12-10|Human Rights Day
+12-18|International Migrants Day`);
+
+add("f",`01-03|Quadrantids meteor shower peak
+02-29|Leap Day
+03-14|Pi Day
+03-20|March equinox
+04-22|Lyrids meteor shower peak
+04-25|World Penguin Day
+05-04|Star Wars Day
+05-25|Towel Day
+06-21|June solstice
+07-07|World Chocolate Day
+07-17|World Emoji Day
+07-22|Pi Approximation Day
+08-08|International Cat Day
+08-12|Perseids meteor shower peak
+08-26|International Dog Day
+09-19|Talk Like a Pirate Day
+09-22|September equinox
+10-01|International Coffee Day
+10-04|World Animal Day
+10-23|Mole Day
+10-25|World Pasta Day
+11-17|Leonids meteor shower peak
+12-14|Geminids meteor shower peak
+12-21|December solstice|On the December solstice the Sun sits at its lowest point in the northern sky, giving the Northern Hemisphere its shortest day and the Southern Hemisphere its longest. Newgrange in Ireland, built around 3200 BCE, lights its inner chamber at winter solstice sunrise, and Stonehenge is aligned to the solstice sun. Ancient Rome celebrated Saturnalia at the same time of year.`);
+
+add("y",`02-11@1990|Nelson Mandela released from prison
+02-12@1809|Charles Darwin born
+03-12@1989|Tim Berners-Lee proposes the World Wide Web
+04-12@1961|Yuri Gagarin becomes the first human in space
+04-15@1912|Titanic sinks
+04-26@1986|Chernobyl disaster
+05-08@1945|Victory in Europe Day
+05-29@1953|First ascent of Mount Everest
+06-06@1944|D-Day landings
+06-16@1963|Valentina Tereshkova becomes the first woman in space
+06-28@1914|Assassination of Archduke Franz Ferdinand
+06-29@2007|First iPhone goes on sale
+07-20@1969|Apollo 11 lands on the Moon
+08-06@1991|First website goes online
+08-28@1963|Martin Luther King Jr. delivers his “I Have a Dream” speech
+09-02@1945|Japan signs surrender, ending World War II
+10-04@1957|Sputnik 1 launched
+10-29@1969|First ARPANET message sent
+11-09@1989|Fall of the Berlin Wall
+12-02@1942|First controlled nuclear chain reaction
+12-07@1941|Attack on Pearl Harbor
+12-14@1911|Roald Amundsen reaches the South Pole
+12-17@1903|Wright brothers make the first powered flight`);
+
+add("u",`2027-08-02|Total solar eclipse (Europe, Africa, Middle East)|The Moon’s shadow will sweep across southern Spain, Morocco, Algeria, Tunisia, Libya, Egypt, Saudi Arabia, Yemen and Somalia. Totality can last up to 6 minutes 23 seconds near Luxor, Egypt, among the longest of this century. Much of Europe and Africa will see a partial eclipse. Never look at the Sun without certified eclipse glasses.
+2028-07-14|LA 2028 Olympics open|Los Angeles hosted the Games in 1932 and 1984, which makes it a three-time host alongside Paris and London. The 2028 program adds cricket, flag football, lacrosse and squash.
+2032-07-23|Brisbane 2032 Olympics open
+2038-01-19|Year 2038 problem (Unix time overflow)
+2045-08-12|Great American total solar eclipse
+2061-07-28|Halley’s Comet returns`);
+
+add("h",`01-07|Orthodox Christmas
+01-14|Makar Sankranti
+02-03|Setsubun (Japan)
+03-01|St David’s Day
+03-03|Hinamatsuri (Girls’ Day, Japan)
+04-13|Songkran (Thai New Year)
+04-14|Vaisakhi
+04-23|St George’s Day
+04-25|ANZAC Day
+05-05|Children’s Day (Japan and Korea)
+06-14|Flag Day (US)
+06-24|Midsummer and St John’s Day
+07-07|Tanabata (Japan)
+08-13|Obon begins (Japan)
+09-11|Patriot Day (US)
+09-11|Ethiopian New Year (Enkutatash)
+11-11|Singles’ Day (11.11)
+11-30|St Andrew’s Day
+12-06|St Nicholas Day
+12-13|St Lucia Day
+12-26|Kwanzaa begins
+3/2/0|Daylight saving time starts (US and Canada)
+11/1/0|Daylight saving time ends (US and Canada)
+3/L/0|Daylight saving time starts (Europe)
+10/L/0|Daylight saving time ends (Europe)
+4/L/5|Arbor Day (US)
+5/1/1|Early May bank holiday (UK)
+5/L/1|Spring bank holiday (UK)
+8/L/1|Summer bank holiday (England)
+6/2/1|King’s Birthday (Australia)
+11/4/4+2|Small Business Saturday
+11/4/4+5|Giving Tuesday
+E-51|Rio Carnival begins
+Tholi|Holi|The Hindu festival of colors, celebrated at the start of spring with colored powder and water. Date shown is approximate.
+Trh|Rosh Hashanah|The Jewish New Year. Jewish holidays begin at sundown the evening before the date shown.
+Tyk|Yom Kippur|The Day of Atonement, the holiest day in Judaism. It begins at sundown the evening before.
+Tpas|Passover begins|The Jewish festival that recalls the Exodus from Egypt. It begins at sundown the evening before the date shown.
+Than|Hanukkah begins|The eight-day Jewish festival of lights. It begins at sundown the evening before the date shown.
+Tisn|Islamic New Year|The first day of Muharram. The date depends on moon sighting, so the date shown is approximate.
+Tmid|Mid-Autumn Festival
+Tmid|Chuseok (Korean harvest festival)
+Tdbt|Dragon Boat Festival`);
+
+add("o",`01-04|World Braille Day
+02-06|International Day of Zero Tolerance for Female Genital Mutilation
+02-27|International Polar Bear Day
+03-01|Zero Discrimination Day
+03-15|World Consumer Rights Day
+03-23|World Meteorological Day
+04-06|International Day of Sport for Development and Peace
+04-12|International Day of Human Space Flight
+04-21|World Creativity and Innovation Day
+04-26|World Intellectual Property Day
+04-28|World Day for Safety and Health at Work
+05-09|Europe Day
+05-12|International Nurses Day
+05-16|International Day of Living Together in Peace
+05-20|World Bee Day
+05-21|World Day for Cultural Diversity
+05-29|International Day of UN Peacekeepers
+06-01|Pride Month begins
+06-03|World Bicycle Day
+06-07|World Food Safety Day
+06-12|World Day Against Child Labour
+06-17|World Day to Combat Desertification
+06-23|Olympic Day
+07-15|World Youth Skills Day
+07-28|World Hepatitis Day
+07-29|International Tiger Day
+08-10|World Lion Day
+08-13|International Left-Handers Day
+09-05|International Day of Charity
+09-10|World Suicide Prevention Day
+09-16|International Day for the Preservation of the Ozone Layer
+09-28|World Rabies Day
+09-29|World Heart Day
+10-02|International Day of Non-Violence
+10-11|International Day of the Girl Child
+10-13|International Day for Disaster Risk Reduction
+10-15|Global Handwashing Day
+10-17|International Day for the Eradication of Poverty
+10-29|World Stroke Day
+10-31|World Cities Day
+11-10|World Science Day for Peace and Development
+11-13|World Kindness Day
+11-21|World Television Day
+11/3/4|World Philosophy Day
+12-05|International Volunteer Day
+12-09|International Anti-Corruption Day
+12-11|International Mountain Day
+12-20|International Human Solidarity Day`);
+
+add("f",`01-03|Earth at perihelion (closest to the Sun)
+07-04|Earth at aphelion (farthest from the Sun)
+01-28|Data Privacy Day
+02-09|National Pizza Day (US)
+02-27|Pokémon Day
+03-10|Mario Day
+03-31|World Backup Day
+05-06|Eta Aquariids meteor shower peak
+05-21|International Tea Day
+06-30|Asteroid Day
+09-08|Star Trek Day
+10-04|World Space Week begins
+10-20|International Chefs Day
+10-21|Orionids meteor shower peak
+10-21|Back to the Future Day
+11-01|World Vegan Day
+11-05|Taurids meteor shower peak
+11-30|Computer Security Day
+12-22|Ursids meteor shower peak
+2/2/2|Safer Internet Day
+5/1/4|World Password Day
+5/3/4|Global Accessibility Awareness Day
+7/L/5|System Administrator Appreciation Day
+8/1/5|International Beer Day
+10/1/5|World Smile Day
+10/2/2|Ada Lovelace Day
+10/2/5|World Egg Day`);
+
+add("s",`4/3/1|Boston Marathon
+5/1/6|Kentucky Derby
+5/1/1|Met Gala
+6/L/0|NYC Pride March
+06-21|Fête de la Musique (World Music Day)
+07-06|San Fermín festival begins (Pamplona)
+07-11|Naadam Festival (Mongolia)
+8/L/3|La Tomatina (Buñol, Spain)
+10/2/0|Chicago Marathon
+11/1/0|New York City Marathon
+11/1/2|Melbourne Cup
+12-10|Nobel Prize award ceremony`);
+
+add("y",`02-14@1876|Alexander Graham Bell files his telephone patent
+03-10@1876|First telephone call
+03-14@1879|Albert Einstein born
+04-04@1949|NATO founded
+04-24@1990|Hubble Space Telescope launched
+05-06@1937|Hindenburg disaster
+05-10@1869|Transcontinental Railroad completed in the US
+05-21@1927|Charles Lindbergh lands in Paris
+05-25@1977|Star Wars released
+06-15@1215|Magna Carta sealed
+06-18@1815|Battle of Waterloo
+06-28@1969|Stonewall uprising begins
+07-01@1997|Hong Kong handover
+07-04@1776|US Declaration of Independence adopted
+07-05@1996|Dolly the sheep born
+07-14@1789|Storming of the Bastille
+07-16@1945|Trinity, the first nuclear test
+07-25@1978|First IVF baby born
+07-29@1958|NASA founded
+08-12@1981|IBM Personal Computer launched
+08-20@1977|Voyager 2 launched
+08-21@1959|Hawaii becomes a US state
+08-26@1920|US women’s suffrage amendment certified
+09-05@1977|Voyager 1 launched
+09-28@1928|Alexander Fleming discovers penicillin
+10-14@1947|Chuck Yeager breaks the sound barrier
+10-18@1867|US takes possession of Alaska
+10-29@1929|Wall Street Crash (Black Tuesday)
+10-31@1517|Martin Luther’s Ninety-five Theses
+11-03@1957|Laika launched into orbit
+11-07@1867|Marie Curie born
+11-19@1863|Gettysburg Address
+11-24@1859|Darwin’s On the Origin of Species published
+12-02@1804|Napoleon crowned Emperor
+12-10@1901|First Nobel Prizes awarded
+12-26@1991|Soviet Union dissolved`);
+
+add("u",`2028-01-26|Annular solar eclipse (South America, Portugal, Spain)
+2028-07-22|Total solar eclipse (Australia, New Zealand)
+2028-11-07|US presidential election
+2028-12-31|Total lunar eclipse
+2029-01-20|US presidential inauguration
+2029-04-13|Asteroid Apophis passes close to Earth|NASA says there is no chance of an impact. The asteroid will pass closer than many satellites orbit and be visible to the naked eye from parts of the world.
+2030-11-25|Total solar eclipse (southern Africa, Australia)
+2032-11-13|Transit of Mercury
+2033-05-18|Unix time reaches 2 billion
+2035-09-02|Total solar eclipse (China, Japan)`);
+
+add("s",`2027-02-14|Super Bowl LXI (Inglewood, California)|The NFL championship game for the 2026 season is scheduled for SoFi Stadium in Inglewood, California.
+2027-10-01|Rugby World Cup 2027 opens (Perth)|Australia play Hong Kong China in the opening match of the first men’s Rugby World Cup with 24 teams. The final is on November 13, 2027, in Sydney.
+2027-11-13|Rugby World Cup 2027 final (Sydney)
+2028-02-13|Super Bowl LXII (Atlanta)
+2030-02-01|French Alps 2030 Winter Olympics begin|The Games run from February 1 to 17, 2030, with ice sports in Nice. The Winter Paralympics follow from March 1 to 10.
+2030-03-01|2030 Winter Paralympics begin (French Alps)`);
+
+add("m",`2026-11-20|The Hunger Games: Sunrise on the Reaping|A prequel set during the 50th Hunger Games, based on Suzanne Collins’s 2025 novel about a young Haymitch Abernathy.
+2026-12-11|Jumanji 3|The next film in the Jumanji series, with Dwayne Johnson, Jack Black, Karen Gillan and Awkwafina.
+2026-12-18|Avengers: Doomsday|Marvel’s next Avengers film, directed by Anthony and Joe Russo, with Robert Downey Jr. returning as Doctor Doom.
+2026-12-18|Dune: Part Three|Denis Villeneuve’s third Dune film, adapting Frank Herbert’s novel Dune Messiah, with Timothée Chalamet and Zendaya.
+2026-12-25|Werwulf|A gothic horror film directed by Robert Eggers, who also made The Witch and Nosferatu.
+2027-04-30|The Legend of Zelda|The live-action film based on Nintendo’s fantasy game series.
+2027-05-28|Star Wars: Starfighter|A standalone Star Wars story directed by Shawn Levy and starring Ryan Gosling.
+2027-06-11|How to Train Your Dragon 2 (live action)|The live-action version of the second How to Train Your Dragon film.
+2027-06-18|Spider-Man: Beyond the Spider-Verse|The third film in Sony’s animated Spider-Verse series.
+2027-06-30|Shrek 5|The next Shrek film, with Mike Myers, Eddie Murphy and Cameron Diaz.
+2027-07-09|Man of Tomorrow|The follow-up to James Gunn’s Superman, from DC Studios.
+2027-07-23|A Minecraft Movie Squared|The sequel to the 2025 live-action film based on the best-selling game.
+2027-09-03|The New Simpsons Movie|A sequel to the 2007 film based on the long-running animated series.
+2027-11-24|Frozen III|The third Frozen film from Disney, directed by Jennifer Lee and Marc Smith.
+2027-12-17|Avengers: Secret Wars|Marvel’s follow-up to Avengers: Doomsday.`);
+
+add("m",`2027-01-01|Pendulum
+2027-01-08|Cloud Girl
+2027-01-15|The Beekeeper 2
+2027-01-15|Children of Blood and Bone
+2027-01-15|Fing!
+2027-01-15|River
+2027-01-22|Air Bud Returns
+2027-01-22|Animal Friends
+2027-01-22|Lords of War
+2027-01-22|The Third Parent
+2027-01-29|Drag
+2027-01-29|Karoshi
+2027-01-29|The Rescue
+2027-01-29|Slayground
+2027-01-29|Witch on the Holy Night
+2027-02-05|The Comeback King
+2027-02-05|Ice Age: Boiling Point|The next Ice Age film from 20th Century Studios.
+2027-02-05|Lice
+2027-02-05|Remain
+2027-02-12|In a Violent Nature 2
+2027-02-12|Narnia: The Magician’s Nephew|Greta Gerwig’s film of the Narnia prequel for Netflix, with an IMAX run beginning February 10.
+2027-02-12|Wishful Thinking
+2027-02-19|Babies
+2027-02-19|CoComelon: The Movie
+2027-02-19|Star Wars: A New Hope (re-release)|A theatrical re-release of the original 1977 Star Wars film.
+2027-02-19|Wife & Dog
+2027-02-26|K-Pop: The Debut
+2027-02-26|Live Like That
+2027-02-26|The Revenge of La Llorona
+2027-03-05|Gatto|Pixar’s animated film about a cat.
+2027-03-05|The Thomas Crown Affair
+2027-03-12|The Chosen Crucifixion
+2027-03-12|The Exorcist: Martyrs
+2027-03-19|The Nightingale
+2027-03-19|Sonic the Hedgehog 4
+2027-03-19|Wolf Creek: Legacy
+2027-03-26|Day Drinker
+2027-03-26|Godzilla x Kong: Supernova
+2027-04-02|Play House
+2027-04-02|The Surgeon
+2027-04-07|Varanasi
+2027-04-09|Boys for Life
+2027-04-09|Panic Carefully
+2027-04-16|Monitor
+2027-04-16|Not Alone
+2027-04-23|A Place in Hell
+2027-04-23|Spaceballs: The New One|A new film in the Spaceballs series.
+2027-05-06|The Resurrection of the Christ: Part One|The first of two films from Mel Gibson about the resurrection of Jesus.
+2027-05-07|Anything But Ghosts
+2027-05-07|Beach Read
+2027-05-14|F.A.S.T.
+2027-05-21|Bad Fairies
+2027-05-21|The Catch
+2027-06-04|John Rambo
+2027-06-04|Skeletons
+2027-06-04|Zac Power
+2027-06-11|Possession
+2027-06-25|The Hole
+2027-06-25|Ocean’s Eleven prequel (untitled)
+2027-07-16|Crawl 2
+2027-07-16|Fake Skating
+2027-07-30|The Comebacker
+2027-07-30|A Quiet Place Part III|The next film in the Quiet Place horror series.
+2027-08-06|The Bluey Movie|The big-screen film based on the Australian children’s series Bluey.
+2027-08-06|Jason Statham Stole My Bike
+2027-08-06|SNOOP
+2027-08-13|Shiver
+2027-08-13|Teenage Mutant Ninja Turtles 2|The sequel to Teenage Mutant Ninja Turtles: Mutant Mayhem.
+2027-08-20|Get Lite
+2027-08-20|Narcs
+2027-08-27|Molepeople
+2027-09-10|The Conjuring: First Communion|A new film in the Conjuring horror series.
+2027-09-24|Blair Witch (new film, untitled)
+2027-10-01|The Great Beyond
+2027-10-08|The Haunting of Hotel Transylvania
+2027-10-08|Sleepover
+2027-10-15|The Mummy: Book of the Dead
+2027-10-22|On the Edge
+2027-11-05|Charlie vs. the Chocolate Factory|A Netflix film inspired by Roald Dahl’s Charlie and the Chocolate Factory.
+2027-11-05|Naughty
+2027-11-11|Treasure Island
+2027-11-12|Margie Clause
+2027-11-12|Seasons
+2027-11-12|Tomorrow, and Tomorrow, and Tomorrow|A film based on Gabrielle Zevin’s novel.
+2027-11-19|Untitled Daniels event film|A new film directed by Daniels, the directors of Everything Everywhere All at Once.
+2027-12-10|24 Jump Street
+2027-12-17|The Housemaid’s Secret
+2027-12-17|The Lord of the Rings: The Hunt for Gollum|A new Lord of the Rings film about Gollum.
+2027-12-22|Buds`);
+
+add("e",`2026-11-16|Grammy nominations announced|Nominations for the 69th Annual Grammy Awards are scheduled to be announced today.
+2026-11-18|APEC Leaders’ Meeting (Shenzhen)|Leaders of the Asia-Pacific Economic Cooperation forum meet in Shenzhen, China, on November 18 and 19.
+2026-11-20|COP31 climate summit ends (Antalya)|The UN climate conference runs from November 9 to 20 in Antalya, Türkiye. Türkiye hosts and holds the presidency, and Australia leads the negotiations.
+2026-11-30|Gotham Awards
+2026-12-02|UN Water Conference begins|The 2026 UN Water Conference is scheduled for December 2 to 4 in the United Arab Emirates, with the venue still to be confirmed.
+2026-12-07|Golden Globe nominations announced
+2026-12-08|UNEA-7 begins (Nairobi)|The seventh UN Environment Assembly meets in Nairobi, Kenya, from December 8 to 12.
+2026-12-14|G20 Leaders’ Summit (Miami)|The summit takes place on December 14 and 15 in Miami, Florida, during the US presidency of the G20.
+2027-01-06|CES 2027 begins (Las Vegas)|The consumer technology trade show runs from January 6 to 9 at the Las Vegas Convention Center.
+2027-01-10|Golden Globe Awards
+2027-01-21|Oscar nominations announced
+2027-02-07|Grammy Awards (69th)|The 69th Annual Grammy Awards are scheduled for the Crypto.com Arena in Los Angeles.
+2027-03-14|Oscars (99th Academy Awards)|The ceremony is set for the Dolby Theatre in Hollywood and will air on ABC.
+2028-03-05|Oscars (100th Academy Awards)|The 100th ceremony is planned as the last on ABC and at the Dolby Theatre, before the show moves to YouTube from 2029.`);
+
+add("m",`2026-12-04|Violent Night 2
+2026-12-04|The Gallerist
+2027-01-08|Everybody Digs Bill Evans
+2027-01-08|The Liberation
+2027-01-15|Tangles
+2027-01-19|Renoir & Love
+2027-01-29|Master and Margarita
+2027-02-05|Trial of Hein
+2027-02-12|Everytime
+2028-01-14|Grandgear
+2028-01-21|Viva La Madness
+2028-02-04|Heart Eyes 2
+2028-02-04|Murder, She Wrote
+2028-02-18|The Batman: Part II|Matt Reeves’ sequel to The Batman, which was moved from 2027 to February 2028.
+2028-03-03|Elden Ring (film)|A live-action film based on FromSoftware’s game, released by A24.
+2028-03-10|Ghost Market
+2028-03-17|Fast Forever|Billed as the final film in the Fast and Furious series.
+2028-03-17|Oh, The Places You’ll Go
+2028-03-31|Tangled (live action)
+2028-04-07|The Beatles Cinematic Event: George|One of four films about the Beatles, one for each member, released the same day.
+2028-04-07|The Beatles Cinematic Event: John|One of four films about the Beatles, one for each member, released the same day.
+2028-04-07|The Beatles Cinematic Event: Paul|One of four films about the Beatles, one for each member, released the same day.
+2028-04-07|The Beatles Cinematic Event: Ringo|One of four films about the Beatles, one for each member, released the same day.
+2028-04-07|Evil Dead Wrath
+2028-05-05|X-Men (Marvel film, title to be announced)
+2028-05-12|Final Destination 7
+2028-05-19|Miami Vice ’85
+2028-05-25|The Resurrection of the Christ: Part Two|The second of two films from Mel Gibson about the resurrection of Jesus.
+2028-05-26|Lilo & Stitch 2
+2028-06-09|Helldivers|A film based on the PlayStation game.
+2028-06-09|The Mandela Catalogue Movie
+2028-06-16|Incredibles 3
+2028-06-30|Call of Duty (film)
+2028-06-30|Donkey
+2028-07-21|Hello Kitty (film)
+2028-07-28|Ghost Rider
+2028-08-11|The Flood
+2028-09-08|Gladys
+2028-09-22|Dynamic Duo
+2028-10-06|Gremlins 3
+2028-11-03|The Lunar Chronicles
+2028-11-22|Clay
+2028-12-15|Black Panther 3`);
+
+add("g",`2026-11-19|Grand Theft Auto VI|Rockstar Games’ next open-world crime game, set in Leonida, its fictional version of Florida, with Vice City as the main city and two lead characters, Lucia and Jason. It comes to PlayStation 5 and Xbox Series X|S after two delays.
+2026-12-04|Monster Hunter Wilds (Switch 2)|Capcom’s monster-hunting game arrives on Nintendo Switch 2 with the updates released so far.
+2026-12-10|Professor Layton and the New World of Steam|A new puzzle-adventure from Level-5 starring Professor Layton and Luke, for Nintendo Switch 2 and Switch.
+2026-12-01|Hela
+2026-12-02|The Ascent Ultimate Edition (Switch 2)
+2026-12-03|Aeterna Lucis
+2026-12-03|Dragon Quest Monsters: The Withered World|A monster-collecting role-playing game in Square Enix’s Dragon Quest series.
+2026-12-03|Rayman Legends Retold
+2026-12-03|Warhammer 40,000: Dawn of War IV|A real-time strategy game set in the Warhammer 40,000 universe.
+2026-12-03|Xenoblade Chronicles 3: Switch 2 Edition|An upgraded edition of Monolith Soft’s role-playing game for Nintendo Switch 2.
+2026-12-10|Attack on Titan 3
+2026-12-10|Stage Tour
+2026-12-11|Path of Exile II|The action role-playing game from Grinding Gear Games.
+2027-02-23|Fable|A new Fable game from Playground Games, set in the fantasy land of Albion.`);
+
+var AB={"Halloween":"Halloween grew out of the ancient Celtic festival of Samhain, which marked the end of the harvest. Irish and Scottish immigrants brought the customs to North America, where costumes and trick-or-treating became popular in the 1900s.",
+"St Patrick’s Day":"The day honors Saint Patrick, the fifth-century missionary who is Ireland’s patron saint. It has been marked for centuries and grew into a worldwide celebration of Irish culture, especially through parades in the United States.",
+"International Women’s Day":"The first observance took place in 1911, and the United Nations began celebrating it in 1975. The day highlights women’s achievements and the push for equality.",
+"Earth Day":"The first Earth Day was held on April 22, 1970, when about 20 million Americans took part in events for a healthier environment. Today it is observed in more than 190 countries.",
+"Pi Day":"Pi Day celebrates the number pi, about 3.14159, on 3/14. Physicist Larry Shaw started it at San Francisco’s Exploratorium in 1988, and the US House of Representatives backed it in 2009.",
+"Star Wars Day":"The day is a pun on the film line “May the Force be with you.” Fans have celebrated it for years, and Lucasfilm now marks it too.",
+"Black Friday":"The day after US Thanksgiving, when the holiday shopping season begins. The name was used in Philadelphia in the 1960s for the crowds and traffic, and stores later promoted it as the day they went into profit.",
+"Cyber Monday":"The National Retail Federation’s Shop.org coined the name in 2005 for the Monday after Thanksgiving, when online shopping jumped.",
+"Juneteenth":"Juneteenth marks June 19, 1865, when Union troops told enslaved people in Galveston, Texas, that they were free, more than two years after the Emancipation Proclamation. It became a US federal holiday in 2021.",
+"Cinco de Mayo":"The day recalls Mexico’s victory over French forces at the Battle of Puebla on May 5, 1862. It is marked most in Puebla and, far more widely, in the United States.",
+"Boxing Day":"Boxing Day falls on the day after Christmas in the UK and many Commonwealth countries. It is often linked to the custom of giving boxes of gifts or money to servants and people in need.",
+"Good Friday":"Christians remember the crucifixion of Jesus on the Friday before Easter. It is a public holiday in many countries.",
+"World AIDS Day":"Observed since 1988, it was the first global health day. It raises awareness of HIV and remembers the people who have died.",
+"Human Rights Day":"It marks December 10, 1948, when the UN General Assembly adopted the Universal Declaration of Human Rights.",
+"United Nations Day":"It marks October 24, 1945, when the UN Charter came into force after enough countries had approved it.",
+"International Day of Peace":"The UN set up the day in 1981 and observes it on September 21. Since 2001 it has been a day of ceasefire and non-violence.",
+"Mother’s Day (US)":"Anna Jarvis campaigned for a national day to honor mothers after her own mother’s death. President Woodrow Wilson made Mother’s Day an official holiday in 1914.",
+"Father’s Day (US)":"Father’s Day began in the early 1900s. President Lyndon Johnson signed a proclamation for it in 1966, and President Richard Nixon made it a permanent holiday in 1972.",
+"Labor Day (US)":"Labor Day honors the American labor movement. The first parade was held in New York City in 1882, and it became a federal holiday in 1894.",
+"Memorial Day (US)":"Memorial Day honors Americans who died while serving in the military. It began after the Civil War as Decoration Day and has been observed on the last Monday of May since 1971.",
+"Martin Luther King Jr. Day (US)":"The holiday honors the civil rights leader. It became a federal holiday in 1983 and was first observed in 1986 on the third Monday of January.",
+"Groundhog Day":"On February 2, a groundhog is said to predict six more weeks of winter if it sees its shadow. The tradition in Punxsutawney, Pennsylvania, dates to 1887 and grew out of German folk customs.",
+"April Fools’ Day":"Nobody knows exactly where it started. One theory links it to France’s switch in the 1500s from an April new year to January 1.",
+"Pride Month begins":"June is Pride Month in memory of the Stonewall uprising, which began on June 28, 1969, in New York City. Pride marches have been held every year since 1970.",
+"Leap Day":"A leap day is added every four years to keep the calendar in step with Earth’s orbit, which takes about 365.24 days. Century years are skipped unless they divide by 400.",
+"World Emoji Day":"It is held on July 17, the date shown on the calendar emoji. Emojipedia founder Jeremy Burge started it in 2014.",
+"Towel Day":"Fans honor author Douglas Adams, who died in 2001, by carrying a towel, a nod to The Hitchhiker’s Guide to the Galaxy.",
+"Talk Like a Pirate Day":"Two friends in Oregon, John Baur and Mark Summers, started it in 1995, and it spread after humorist Dave Barry wrote about it in 2002.",
+"Back to the Future Day":"October 21, 2015 is the date Marty McFly travels to in Back to the Future Part II, which made the day a fan holiday.",
+"Mario Day":"March 10 reads as MAR10, a play on the name Mario. Nintendo and fans mark it each year.",
+"Ada Lovelace Day":"The day celebrates women in science, technology, engineering and maths. It honors Ada Lovelace, who wrote what is often called the first computer program in the 1840s.",
+"Boston Marathon":"The oldest annual marathon in the world, first run in 1897 and held on Patriots’ Day in Massachusetts.",
+"Kentucky Derby":"The horse race has been run at Churchill Downs in Louisville since 1875 and is nicknamed the most exciting two minutes in sports.",
+"Met Gala":"An annual fundraiser for the Metropolitan Museum of Art’s Costume Institute, held on the first Monday in May.",
+"La Tomatina (Buñol, Spain)":"A giant tomato fight held in the Spanish town of Buñol on the last Wednesday of August. It is usually dated to 1945.",
+"Naadam Festival (Mongolia)":"Mongolia’s biggest festival features wrestling, archery and horse racing, known as the three manly games.",
+"San Fermín festival begins (Pamplona)":"A nine-day festival in Pamplona, Spain, honoring Saint Fermin and famous for the running of the bulls.",
+"Nobel Prize award ceremony":"The ceremony is held on December 10, the anniversary of Alfred Nobel’s death in 1896. The first prizes were awarded in 1901."};
+EV.forEach(function(e){if(!e.about&&AB[e.name])e.about=AB[e.name]});
+
+/* National days: ISO country code followed by MM-DD. Names and flags come from the browser. */
+var DN=null;try{DN=new Intl.DisplayNames(undefined,{type:"region"})}catch(e){}
+var flag=function(c){return String.fromCodePoint.apply(null,c.split("").map(function(x){return 127397+x.charCodeAt(0)}))};
+("US07-04 CA07-01 MX09-16 BR09-07 AR07-09 CL09-18 CO07-20 PE07-28 VE07-05 EC08-10 BO08-06 UY08-25 PY05-14 DO02-27 JM08-06 TT08-31 HT01-01 PA11-03 CR09-15 GT09-15 HN09-15 SV09-15 NI09-15 BS07-10 BB11-30 GY05-26 "+
+"FR07-14 DE10-03 IT06-02 ES10-12 PT06-10 NL04-27 BE07-21 CH08-01 AT10-26 SE06-06 NO05-17 DK06-05 FI12-06 IS06-17 PL11-11 CZ10-28 SK09-01 HU08-20 RO12-01 BG03-03 GR03-25 HR05-30 RS02-15 SI06-25 UA08-24 LT02-16 LV11-18 EE02-24 BY07-03 MD08-27 AL11-28 MK09-08 ME05-21 CY10-01 MT09-21 LU06-23 LI08-15 MC11-19 AD09-08 SM09-03 RU06-12 GE05-26 AM09-21 AZ05-28 "+
+"CN10-01 JP02-11 KR08-15 KP09-09 IN08-15 PK08-14 BD03-26 LK02-04 MM01-04 TH12-05 VN09-02 LA12-02 KH11-09 MY08-31 SG08-09 ID08-17 PH06-12 BN02-23 TL05-20 KZ12-16 UZ09-01 KG08-31 TJ09-09 AF08-19 JO05-25 LB11-22 SY04-17 SA09-23 AE12-02 QA12-18 KW02-25 BH12-16 OM11-18 YE05-22 TR10-29 MV07-26 BT12-17 "+
+"NG10-01 GH03-06 KE12-12 ZA04-27 EG07-23 MA11-18 DZ07-05 TN03-20 LY12-24 SD01-01 UG10-09 TZ12-09 ZM10-24 ZW04-18 BW09-30 NA03-21 MZ06-25 AO11-11 CM05-20 CI08-07 SN04-04 ML09-22 BF12-11 NE08-03 TD08-11 GM02-18 SL04-27 LR07-26 GN10-02 TG04-27 BJ08-01 GA08-17 CG08-15 CD06-30 CF08-13 MG06-26 MU03-12 SC06-29 MW07-06 LS10-04 SZ09-06 SO07-01 DJ06-27 ER05-24 GQ10-12 CV07-05 ST07-12 KM07-06 GW09-24 MR11-28 SS07-09 BI07-01 "+
+"AU01-26 NZ02-06 FJ10-10 PG09-16 WS06-01 VU07-30 SB07-07 KI07-12 NR01-31 TV10-01 PW10-01 FM11-03 DM11-03 LC02-22 VC10-27 GD02-07 AG11-01 KN09-19 BZ09-21 SR11-25 MH05-01 BA11-25 TW10-10 NP09-20 MN07-11 IR02-11 ET05-28 CU01-01 IE03-17").replace(/([A-Z]{2})(\d\d-\d\d)/g,function(_,c,d){
+  var nm;try{nm=DN?DN.of(c):c}catch(e){nm=c}
+  EV.push({cat:"n",r:d,yr:0,once:0,name:nm+" national day",about:"",flag:flag(c)});return""});
+
+/* Next occurrence: yearly events roll to next year once their day is over */
+function nxt(ev){var now=Date.now(),y=new Date().getFullYear();
+  if(ev.once)return ev.once+DAY>now?ev.once:null;
+  for(var i=0;i<5;i++){var t=occ(ev.r,y+i);if(t!=null&&t+DAY>now)return t}return null}
+function mts(it){if(!it.rep)return it.ts;var d=new Date(it.ts),y=new Date().getFullYear();
+  for(var i=-1;i<2;i++){var t=L(y+i,d.getMonth()+1,d.getDate(),d.getHours(),d.getMinutes());if(t>=it.ts&&t+DAY>Date.now())return t}return it.ts}
+
+var mine=ld("cd:mine",null)||[{id:"dec5",name:"December 5",ts:L(2026,12,5),created:L(2026,11,15),note:"",rep:false}];
+var pins=ld("cd:pins",[]),ALL=[],rollAt=Infinity,state={cat:"all",q:"",lim:24,when:0,sort:"soon",view:"list"};
+
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+var icon=function(it){return it.flag||it.emoji||IC[it.cat]||"⏳"};
+function ord(n){var s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+function fmt(it,long){var d=new Date(it.ts),all=it.cat||(d.getHours()===0&&d.getMinutes()===0);
+  var o={year:"numeric",month:long?"long":"short",day:"numeric"};if(long)o.weekday="long";
+  var s=d.toLocaleDateString(undefined,o);
+  if(!all)s+=" at "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});return s}
+function live(ts,c,big){var w=el("div","live"+(big?" big":""));w.dataset.ts=ts;
+  var n=el("div","n");n.append(el("span","d"),el("span","u"));w.append(n,el("div","t"));
+  if(c){w.dataset.c=c;var b=el("div","bar");b.append(document.createElement("i"));w.append(b)}return w}
+function paint(w){var ts=+w.dataset.ts,now=Date.now(),diff=ts-now,q=function(s){return w.querySelector(s)};
+  if(diff<=0){var ago=Math.floor(-diff/DAY);
+    if(ago<1){q(".d").textContent="Today";q(".u").textContent="";q(".t").textContent="It’s here"}
+    else{q(".d").textContent="Passed";q(".u").textContent="";q(".t").textContent=ago+(ago===1?" day ago":" days ago")}}
+  else{var d=Math.floor(diff/DAY),r=diff-d*DAY;q(".d").textContent=d;q(".u").textContent=d===1?"day":"days";
+    q(".t").textContent=pad(Math.floor(r/36e5))+"h "+pad(Math.floor(r%36e5/6e4))+"m "+pad(Math.floor(r%6e4/1e3))+"s"}
+  var i=q(".bar i");if(i){var c=+w.dataset.c;i.style.width=Math.round(clamp((now-c)/(ts-c))*100)+"%"}}
+function paintRing(r){var ts=+r.dataset.ts,c=+r.dataset.c,p=clamp((Date.now()-c)/(ts-c));r.querySelector(".arc").style.strokeDashoffset=100-p*100;r.querySelector("text").textContent=Math.floor(p*100)+"%"}
+function paintStats(s){var ts=+s.dataset.ts,df=Math.max(0,ts-Date.now()),d=Math.floor(df/DAY),b=s.querySelectorAll("b"),wd=0,x=new Date();x.setHours(0,0,0,0);
+  for(var i=0;i<d&&i<4000;i++){x.setDate(x.getDate()+1);var g=x.getDay();if(g&&g<6)wd++}
+  b[0].textContent=Math.floor(d/7)+"w "+d%7+"d";b[1].textContent=wd;b[2].textContent=Math.floor(df/36e5).toLocaleString();b[3].textContent=Math.floor(df/6e4).toLocaleString()}
+function paintAll(){document.querySelectorAll(".live").forEach(paint);document.querySelectorAll(".ring").forEach(paintRing);document.querySelectorAll(".stats").forEach(paintStats)}
+
+function card(it){var b=el("button","card"+(it.own?" mine":""));b.type="button";if(it.cat)b.dataset.cat=it.cat;if(it.color)b.style.setProperty("--cc",it.color);
+  var ct=el("div","ct");ct.append(el("span","bd",icon(it)),el("span",null,it.name+(pins.indexOf(it.name)>-1?" ★":"")));
+  b.append(ct,live(it.ts),el("p","dt",fmt(it,false)));
+  if(it.yr)b.append(el("p","dt",ord(new Date(it.ts).getFullYear()-it.yr)+" anniversary"));
+  b.onclick=function(){openDetail(it)};return b}
+
+function build(){rollAt=Infinity;var out=[];
+  EV.forEach(function(ev){var t=nxt(ev);if(t==null)return;ev.ts=t;ev.c=ev.once?0:t-365*DAY;rollAt=Math.min(rollAt,t+DAY);out.push(ev)});
+  return out.sort(function(a,b){return a.ts-b.ts})}
+function myList(){return mine.map(function(it){var t=mts(it);if(it.rep)rollAt=Math.min(rollAt,t+DAY);
+  return Object.assign({},it,{ts:t,own:true,c:t>it.ts?t-365*DAY:it.created})}).sort(function(a,b){var n=Date.now(),pa=a.ts<n,pb=b.ts<n;return(pa-pb)||(pa?b.ts-a.ts:a.ts-b.ts)})}
+
+function renderHero(){var h=$("#hero");h.replaceChildren();
+  var e=ALL.filter(function(x){return x.cat==="h"||x.cat==="u"})[0];if(!e){h.hidden=true;return}h.hidden=false;
+  var n=el("h2","hn");n.style.margin="6px 0 0";n.append(el("span",null,icon(e)),el("span",null,e.name));
+  var b=el("button","btn","See the history");b.type="button";b.onclick=function(){openDetail(e)};
+  var a=el("div","acts");a.append(b);
+  var c=el("div","hc");c.append(el("p","hl","Next up"),n,el("p","dt hd",fmt(e,true)),live(e.ts,e.c,true),a);h.append(c);
+  var rc=e.c||e.ts-365*DAY;
+  h.insertAdjacentHTML("beforeend",'<svg class="ring" viewBox="0 0 200 200" data-ts="'+e.ts+'" data-c="'+rc+'" role="img" aria-label="Progress toward this event"><circle cx="100" cy="100" r="86" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="14"/><circle class="arc" cx="100" cy="100" r="86" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 100 100)"/><text x="100" y="108" text-anchor="middle" font-size="40" font-weight="800" fill="currentColor" font-family="Bricolage Grotesque,system-ui,sans-serif">0%</text><text x="100" y="134" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity=".85">of the way there</text></svg>');
+  var dl=Math.ceil((e.ts-Date.now())/DAY);document.title=e.name+(dl<=0?" is today":" in "+dl+(dl===1?" day":" days"))+" – Countdowns"}
+function renderSoon(){var s=$("#soon");s.replaceChildren();var hero=ALL.filter(function(x){return x.cat==="h"||x.cat==="u"})[0],now=Date.now();
+  ALL.filter(function(x){return x!==hero}).slice(0,8).forEach(function(e){var n=Math.ceil((e.ts-now)/DAY);
+    var b=el("button","pill");b.type="button";b.dataset.cat=e.cat;b.append(el("span","bd",icon(e)));
+    var t=el("span","pt");t.append(el("b",null,e.name),el("small",null,n<=0?"Today":n===1?"Tomorrow":"In "+n+" days"));b.append(t);
+    b.onclick=function(){openDetail(e)};s.append(b)})}
+function renderMine(){var m=$("#mine");m.replaceChildren();
+  myList().forEach(function(i){m.append(card(i))});
+  ALL.filter(function(e){return pins.indexOf(e.name)>-1}).forEach(function(e){m.append(card(e))});
+  var e=el("button","card empty","+ New countdown");e.type="button";e.onclick=function(){openNew()};m.append(e)}
+function renderExplore(){var q=state.q.trim().toLowerCase();
+  var rows=ALL.filter(function(e){return(state.cat==="all"||(state.cat==="pin"?pins.indexOf(e.name)>-1:e.cat===state.cat))&&(!q||e.name.toLowerCase().indexOf(q)>-1)&&(!state.when||e.ts-Date.now()<=state.when*DAY)});
+  if(state.sort==="az")rows=rows.slice().sort(function(a,b){return a.name.localeCompare(b.name)});
+  var g=$("#events"),last="";g.replaceChildren();
+  rows.slice(0,state.lim).forEach(function(e){
+    if(state.sort!=="az"){var m=new Date(e.ts).toLocaleDateString(undefined,{month:"long",year:"numeric"});if(m!==last){last=m;g.append(el("h3","mh",m))}}
+    g.append(card(e))});
+  $("#count").textContent=rows.length?"Showing "+Math.min(state.lim,rows.length)+" of "+rows.length+" events":"No events match. Try another search, or add your own with the + button.";
+  $("#more").hidden=rows.length<=state.lim;paintAll();if(state.view==="cal")renderCal()}
+var WHEN=[[0,"Any time"],[7,"This week"],[30,"Next 30 days"],[90,"Next 90 days"]];
+function renderChips(){var c=$("#chips"),w=$("#when");c.replaceChildren();w.replaceChildren();
+  CHIPS.forEach(function(x){var n=x[0]==="all"?ALL.length:x[0]==="pin"?pins.length:ALL.filter(function(e){return e.cat===x[0]}).length;
+    var b=el("button","chip"+(state.cat===x[0]?" on":""),x[1]);b.type="button";b.append(el("small",null,n));
+    b.onclick=function(){state.cat=x[0];state.lim=24;renderChips();renderExplore()};c.append(b)});
+  WHEN.forEach(function(x){var b=el("button","chip"+(state.when===x[0]?" on":""),x[1]);b.type="button";
+    b.onclick=function(){state.when=x[0];state.lim=24;renderChips();renderExplore()};w.append(b)});
+  var s=el("button","chip","Sort: "+(state.sort==="az"?"A–Z":"Soonest"));s.type="button";
+  s.onclick=function(){state.sort=state.sort==="az"?"soon":"az";renderChips();renderExplore()};w.append(s)}
+function render(){ALL=build();renderHero();renderSoon();renderMine();renderChips();renderExplore()}
+
+var dlg=$("#dlg"),newdlg=$("#newdlg");
+var iso=function(ts){var d=new Date(ts);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+function openDetail(it){var body=$("#dbody");body.replaceChildren();
+  var rec=it.own?it.rep:!it.once;
+  var h=el("div","dh");h.append(el("span","em",icon(it)));
+  var t=el("div");t.append(el("h2",null,it.name),el("p","dt",fmt(it,true)));h.append(t);
+  var tags=el("div","tags");tags.append(el("span","tag",it.own?"Yours":CN[it.cat]),el("span","tag",rec?"Repeats every year":"One-time"));
+  if(it.yr)tags.append(el("span","tag",ord(new Date(it.ts).getFullYear()-it.yr)+" anniversary"));
+  var st=el("div","stats");st.dataset.ts=it.ts;["Weeks","Weekdays","Hours","Minutes"].forEach(function(l){var s=el("div","stat");s.append(el("b"),el("small",null,l));st.append(s)});
+  body.append(h,tags,live(it.ts,rec||it.own?it.c:0,true),st);
+  var acts=el("div","acts"),sh=el("button","btn ghost","Share");sh.type="button";sh.onclick=function(){share(it,sh)};
+  if(it.own){
+    if(it.note)body.append(el("p","txt",it.note));
+    var del=el("button","btn ghost","Delete countdown");del.type="button";
+    del.onclick=function(){if(del.dataset.s){mine=mine.filter(function(x){return x.id!==it.id});sv("cd:mine",mine);render();dlg.close();toast("Countdown deleted")}else{del.dataset.s=1;del.textContent="Tap again to delete"}};
+    var ed=el("button","btn","Edit");ed.type="button";ed.onclick=function(){dlg.close();openNew(mine.filter(function(x){return x.id===it.id})[0])};
+    acts.append(ed,sh,del);
+  }else{
+    body.append(el("h3",null,it.cat==="y"?"What happened":"About"));
+    body.append(el("p","txt",it.about||(it.yr?it.name+" happened on "+new Date(L(it.yr,new Date(it.ts).getMonth()+1,new Date(it.ts).getDate())).toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})+".":DS[it.cat])));
+    histBlock(it,body);
+    var pn=el("button","btn ghost",pins.indexOf(it.name)>-1?"★ Pinned":"☆ Pin");pn.type="button";
+    pn.onclick=function(){var i=pins.indexOf(it.name);if(i>-1)pins.splice(i,1);else pins.push(it.name);sv("cd:pins",pins);pn.textContent=i>-1?"☆ Pin":"★ Pinned";renderMine();renderChips();renderExplore()};
+    var f=function(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())};
+    var cal=el("a","btn ghost","Add to Google Calendar");cal.target="_blank";cal.rel="noopener";
+    cal.href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(it.name)+"&dates="+f(new Date(it.ts))+"/"+f(new Date(it.ts+DAY))+(/^\d\d-\d\d/.test(it.r)?"&recur="+encodeURIComponent("RRULE:FREQ=YEARLY"):"");
+    var wk=el("a","btn ghost","Read more on Wikipedia");wk.target="_blank";wk.rel="noopener";
+    wk.href="https://en.wikipedia.org/wiki/Special:Search?search="+encodeURIComponent(it.name);
+    var mk=el("button","btn","Make my own");mk.type="button";
+    mk.onclick=function(){dlg.close();openNew({name:it.name,date:iso(it.ts),rep:rec})};
+    acts.append(mk,pn,sh,cal,wk);
+  }
+  body.append(acts);paintAll();dlg.showModal();if(it.ts<=Date.now()&&it.ts+DAY>Date.now())confetti()}
+var EM=["⏳","🎂","✈️","🎓","💍","🏖️","🎮","⚽","🎄","🚀"],CO=["#2f5bff","#e8467c","#1f9d6b","#e0a100","#8a5cf6","#0aa0c2"],edit=null,pick={e:EM[0],c:CO[0]};
+function tpls(show){var t=$("#tpl");t.hidden=!show;t.replaceChildren();if(!show)return;
+  [["Birthday","🎂"],["Trip","✈️"],["Wedding","💍"],["Exam","🎓"],["Launch","🚀"],["Vacation","🏖️"]].forEach(function(x){var b=el("button","chip",x[0]+" "+x[1]);b.type="button";b.onclick=function(){$("#fn").value=x[0];pick.e=x[1];picks()};t.append(b)})}
+function picks(){var a=$("#pe"),b=$("#pc");a.replaceChildren();b.replaceChildren();
+  EM.forEach(function(x){var k=el("button","pk"+(pick.e===x?" on":""),x);k.type="button";k.setAttribute("aria-label","Icon "+x);k.onclick=function(){pick.e=x;picks()};a.append(k)});
+  CO.forEach(function(x){var k=el("button","sw"+(pick.c===x?" on":""));k.type="button";k.style.background=x;k.setAttribute("aria-label","Color "+x);k.onclick=function(){pick.c=x;picks()};b.append(k)})}
+function openNew(p){p=p||{};edit=p.id||null;var d=p.id?new Date(p.ts):null;
+  $("#fh").textContent=edit?"Edit countdown":"New countdown";
+  $("#fn").value=p.name||"";$("#fd").value=d?iso(p.ts):(p.date||"");$("#ft").value=d?pad(d.getHours())+":"+pad(d.getMinutes()):"00:00";
+  $("#fo").value=p.note||"";$("#fr").checked=!!p.rep;pick={e:p.emoji||EM[0],c:p.color||CO[0]};picks();tpls(!edit&&!p.name);
+  $("#fd").min=edit?"":iso(Date.now());$("#fe").textContent="";newdlg.showModal();$("#fn").focus()}
+var tt;function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},2200)}
+function share(it,btn){var d=Math.ceil((it.ts-Date.now())/DAY),txt=it.name+(d<=0?" is today":" is in "+d+(d===1?" day":" days"))+" ("+fmt(it,true)+")";
+  var done=function(m){btn.textContent=m;setTimeout(function(){btn.textContent="Share"},1600)};
+  try{if(navigator.share){navigator.share({title:it.name,text:txt}).catch(function(){})}
+  else navigator.clipboard.writeText(txt).then(function(){done("Copied!")},function(){done("Couldn’t copy")})}catch(e){done("Couldn’t copy")}}
+function confetti(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var c=$("#cf");try{c.showPopover()}catch(e){}
+  var x=c.getContext("2d"),W=c.width=innerWidth,H=c.height=innerHeight,cols=["#2f5bff","#e8467c","#f2a900","#1f9d6b","#8a5cf6","#0aa0c2"],t=0,
+  P=Array.from({length:110},function(){return{x:W/2,y:H*.55,vx:(Math.random()-.5)*16,vy:-Math.random()*16-4,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.random()*6|0]}});
+  (function f(){x.clearRect(0,0,W,H);P.forEach(function(p){p.vy+=.32;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6);x.restore()});
+    if(++t<120)requestAnimationFrame(f);else{x.clearRect(0,0,W,H);try{c.hidePopover()}catch(e){}}})()}
+$("#add").onclick=function(){openNew()};
+$("#f").onsubmit=function(e){e.preventDefault();
+  var d=$("#fd").value.split("-").map(Number),t=$("#ft").value.split(":").map(Number),ts=new Date(d[0],d[1]-1,d[2],t[0],t[1]).getTime();
+  if(!edit&&!(ts>Date.now())){$("#fe").textContent="Pick a date and time in the future.";return}
+  var rec={name:$("#fn").value.trim(),ts:ts,note:$("#fo").value.trim(),rep:$("#fr").checked,emoji:pick.e,color:pick.c};
+  if(edit){mine=mine.map(function(x){return x.id===edit?Object.assign({},x,rec):x})}
+  else mine.push(Object.assign(rec,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),created:Date.now()}));
+  sv("cd:mine",mine);render();newdlg.close();toast(edit?"Countdown updated":"Countdown added");edit=null};
+[dlg,newdlg,$("#bkdlg"),$("#fdlg")].forEach(function(d){d.addEventListener("click",function(e){if(e.target===d||e.target.hasAttribute("data-close"))d.close()})});
+$("#q").oninput=function(e){state.q=e.target.value;state.lim=24;renderExplore()};
+$("#more").onclick=function(){state.lim+=24;renderExplore()};
+function pass(e){var q=state.q.trim().toLowerCase();return(state.cat==="all"||(state.cat==="pin"?pins.indexOf(e.name)>-1:e.cat===state.cat))&&(!q||e.name.toLowerCase().indexOf(q)>-1)}
+function evOn(y,mo){var map={},q=state.q.trim().toLowerCase();
+  function put(it){var d=new Date(it.ts);if(d.getFullYear()===y&&d.getMonth()===mo)(map[d.getDate()]=map[d.getDate()]||[]).push(it)}
+  EV.forEach(function(ev){if(!pass(ev))return;var t=ev.once||occ(ev.r,y);if(t!=null)put(Object.assign({},ev,{ts:t,c:ev.once?0:t-365*DAY}))});
+  if(state.cat==="all")mine.forEach(function(it){if(q&&it.name.toLowerCase().indexOf(q)<0)return;var d=new Date(it.ts),t=it.rep&&y>=d.getFullYear()?L(y,d.getMonth()+1,d.getDate(),d.getHours(),d.getMinutes()):it.ts;put(Object.assign({},it,{ts:t,own:true,c:it.created}))});
+  return map}
+var cur=new Date();cur=new Date(cur.getFullYear(),cur.getMonth(),1);var selDay=null;
+function renderCal(){var c=$("#cal");c.replaceChildren();
+  var y=cur.getFullYear(),mo=cur.getMonth(),map=evOn(y,mo),now=new Date();
+  var head=el("div","calh"),pv=el("button","ic","‹"),nx=el("button","ic","›"),td=el("button","chip","Today");
+  pv.type=nx.type=td.type="button";pv.setAttribute("aria-label","Previous month");nx.setAttribute("aria-label","Next month");
+  pv.onclick=function(){cur=new Date(y,mo-1,1);selDay=null;renderCal()};
+  nx.onclick=function(){cur=new Date(y,mo+1,1);selDay=null;renderCal()};
+  td.onclick=function(){cur=new Date(now.getFullYear(),now.getMonth(),1);selDay=now.getDate();renderCal()};
+  head.append(pv,el("h3","calt",cur.toLocaleDateString(undefined,{month:"long",year:"numeric"})),td,nx);
+  var g=el("div","calg");
+  for(var i=0;i<7;i++)g.append(el("div","cwd",new Date(2023,0,1+i).toLocaleDateString(undefined,{weekday:"short"})));
+  for(var b=0,first=new Date(y,mo,1).getDay();b<first;b++)g.append(el("div"));
+  for(var d=1,dim=new Date(y,mo+1,0).getDate();d<=dim;d++)(function(d){
+    var items=map[d]||[],k=el("button","cday"+(d===now.getDate()&&mo===now.getMonth()&&y===now.getFullYear()?" td":"")+(d===selDay?" sel":""));k.type="button";
+    var ic=el("span","dots");items.slice(0,3).forEach(function(it){ic.append(el("i",null,icon(it)))});
+    if(items.length>3)ic.append(el("small",null,"+"+(items.length-3)));
+    k.append(el("span","dn",d),ic);k.setAttribute("aria-label",new Date(y,mo,d).toLocaleDateString(undefined,{month:"long",day:"numeric"})+", "+items.length+" events");
+    k.onclick=function(){selDay=d;renderCal()};g.append(k)})(d);
+  c.append(head,g);
+  if(selDay){var list=el("div","agenda"),its=map[selDay]||[];
+    list.append(el("h3",null,new Date(y,mo,selDay).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})));
+    if(!its.length)list.append(el("p","cnt","Nothing on this day. Tap + to add your own countdown."));
+    its.forEach(function(it){var p=el("button","pill");p.type="button";if(it.cat)p.dataset.cat=it.cat;if(it.color)p.style.setProperty("--cc",it.color);
+      var t=el("span","pt");t.append(el("b",null,it.name),el("small",null,it.own?"Yours":CN[it.cat]));p.append(el("span","bd",icon(it)),t);
+      p.onclick=function(){openDetail(it)};list.append(p)});
+    c.append(list)}}
+function setView(v){state.view=v;$("main").classList.toggle("cal-on",v==="cal");
+  document.querySelectorAll("#seg button").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)});
+  if(v==="cal"){if(selDay===null)selDay=new Date().getDate();renderCal()}}
+document.querySelectorAll("#seg button").forEach(function(b){b.onclick=function(){setView(b.dataset.v)}});
+$("#bk").onclick=function(){$("#bkt").value=JSON.stringify({v:1,mine:mine,pins:pins});$("#bke").textContent="";$("#bkdlg").showModal()};
+$("#bks").onclick=function(){$("#bkt").select()};
+$("#bkr").onclick=function(){try{var d=JSON.parse($("#bkt").value);if(!d||!Array.isArray(d.mine))throw 0;
+  mine=d.mine.filter(function(x){return x&&typeof x.name==="string"&&+x.ts}).map(function(x){return{id:String(x.id||Date.now().toString(36)+Math.random().toString(36).slice(2,6)),name:String(x.name).slice(0,40),ts:+x.ts,created:+x.created||+x.ts-DAY,note:String(x.note||"").slice(0,140),rep:!!x.rep,emoji:x.emoji?String(x.emoji).slice(0,8):undefined,color:/^#[0-9a-f]{6}$/i.test(x.color)?x.color:undefined}});
+  pins=Array.isArray(d.pins)?d.pins.map(String):[];sv("cd:mine",mine);sv("cd:pins",pins);render();$("#bkdlg").close();toast("Backup restored")}
+  catch(e){$("#bke").textContent="That doesn’t look like a valid backup."}};
+var SAM=null;
+if(window.claude&&claude.use)claude.use("sample").then(function(x){SAM=x;if(x)$("#fnd").hidden=false}).catch(function(){});
+$("#fnd").onclick=function(){$("#fer").textContent="";$("#fdlg").showModal();$("#fq").focus()};
+$("#fgo").onclick=function(){
+  var topic=$("#fq").value.trim()||"notable events anywhere in the world",days=+$("#fw").value,res=$("#fres"),err=$("#fer"),btn=$("#fgo");
+  err.textContent="";res.replaceChildren();
+  if(!SAM){err.textContent="Claude isn’t available on this page right now.";return}
+  btn.disabled=true;btn.textContent="Asking Claude… this can take a minute";
+  SAM.json("List up to 10 real, notable events that take place between "+iso(Date.now())+" and "+iso(Date.now()+days*DAY)+" matching this request: \""+topic.replace(/"/g,"'")+"\". Only include events you are confident exist and whose exact start date you are confident about, and skip anything uncertain. Return ONLY a JSON array of objects with these keys: name (string, under 60 characters), date (YYYY-MM-DD), emoji (a single emoji), note (one short sentence, under 120 characters).")
+  .then(function(list){
+    var have={};EV.forEach(function(e){have[e.name.toLowerCase()]=1});mine.forEach(function(e){have[e.name.toLowerCase()]=1});
+    var ok=(Array.isArray(list)?list:[]).filter(function(x){return x&&typeof x.name==="string"&&/^\d{4}-\d\d-\d\d$/.test(x.date)}).map(function(x){var p=x.date.split("-").map(Number);
+      return{name:x.name.slice(0,60),ts:L(p[0],p[1],p[2]),emoji:typeof x.emoji==="string"&&x.emoji?x.emoji.slice(0,8):"⭐",note:typeof x.note==="string"?x.note.slice(0,120):""}})
+      .filter(function(x){return x.ts>Date.now()&&!have[x.name.toLowerCase()]});
+    if(!ok.length){err.textContent="Nothing new came back for that. Try a different search.";return}
+    ok.forEach(function(x){var r=el("div","frow"),t=el("div");
+      t.append(el("b",null,x.emoji+" "+x.name),el("small",null,fmt({ts:x.ts},true)),el("small",null,x.note));
+      var a=el("button","btn","Add");a.type="button";
+      a.onclick=function(){mine.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:x.name,ts:x.ts,created:Date.now(),note:"Suggested by Claude. Double-check the date.",rep:false,emoji:x.emoji,color:CO[0]});sv("cd:mine",mine);render();a.textContent="Added";a.disabled=true};
+      r.append(t,a);res.append(r)})})
+  .catch(function(e){var c=e&&e.code;err.textContent=c==="not_granted"?"You chose not to allow Claude on this page.":c==="rate_limited"?"Too many requests. Try again in a little while.":c==="invalid_json"?"Claude’s answer wasn’t readable. Try again.":"Something went wrong. Try again."})
+  .then(function(){btn.disabled=false;btn.textContent="Ask Claude"})};
+var hist=ld("cd:hist",{});
+function histBlock(it,body){if(it.about)return;
+  var box=el("div");body.append(box);
+  function show(t){box.replaceChildren();box.append(el("p","txt",t),el("p","dt","Written by Claude from its own knowledge, so it may contain mistakes."))}
+  if(hist[it.name]){show(hist[it.name]);return}
+  if(!SAM)return;
+  var b=el("button","btn ghost",(it.cat==="m"||it.cat==="g"?"Ask Claude what it’s about":"Get the full history from Claude"));b.type="button";b.style.marginTop="12px";box.append(b);
+  b.onclick=function(){b.disabled=true;b.textContent="Asking Claude…";
+    SAM.json((it.cat==="m"||it.cat==="g"?"Write a short, factual summary (2 to 3 sentences, under 70 words) of what the upcoming "+(it.cat==="m"?"film":"video game")+" \""+it.name.replace(/"/g,"'")+"\" is about, who makes it and who stars in it or leads it, as far as you know. If you do not know it, say so in one sentence.":"Write a short, factual history (2 to 4 sentences, under 90 words) of \""+it.name.replace(/"/g,"'")+"\" ("+(CN[it.cat]||"event").toLowerCase()+", on "+fmt(it,true)+"). Say what it is, where it comes from and when it began. If you are not sure of a detail, leave it out.")+" Return ONLY JSON: {\"history\":string}")
+    .then(function(r){var t=r&&typeof r.history==="string"?r.history.trim().slice(0,700):"";if(!t)throw 0;hist[it.name]=t;sv("cd:hist",hist);show(t)})
+    .catch(function(){b.disabled=false;b.textContent="Couldn’t load it. Try again"})}}
+var th=ld("cd:th",null);if(th)document.documentElement.dataset.theme=th;
+$("#tg").onclick=function(){var r=document.documentElement,c=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),n=c==="dark"?"light":"dark";r.dataset.theme=n;sv("cd:th",n)};
+
+render();
+var yr=new Date().getFullYear(),yp=clamp((Date.now()-L(yr,1,1))/(L(yr+1,1,1)-L(yr,1,1)));
+$(".brand").title=Math.round(yp*100)+"% of "+yr+" has passed";
+requestAnimationFrame(function(){requestAnimationFrame(function(){$("#lg").style.strokeDashoffset=100-yp*100;$("#kb").style.transform="rotate("+yp*360+"deg)"})});
+var lastDay=new Date().getDate();
+setInterval(function(){var d=new Date().getDate();if(Date.now()>=rollAt||d!==lastDay){lastDay=d;render()}else paintAll()},1000);
+document.addEventListener("keydown",function(e){if(/INPUT|TEXTAREA/.test(document.activeElement.tagName)||document.querySelector("dialog[open]")||e.metaKey||e.ctrlKey)return;
+  if(e.key==="/"){e.preventDefault();$("#q").focus()}else if(e.key==="n"){e.preventDefault();openNew()}else if(e.key==="t")$("#tg").click()});
+if(ALL.concat(myList()).some(function(e){return(e.own||e.cat==="h"||e.cat==="u")&&e.ts<=Date.now()&&e.ts+DAY>Date.now()}))setTimeout(confetti,700);
+})();
+</script>
+</body>
+</html>
